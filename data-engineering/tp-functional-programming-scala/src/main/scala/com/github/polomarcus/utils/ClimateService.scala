@@ -16,8 +16,10 @@ object ClimateService {
    * @param description "my awesome sentence contains a key word like climate change"
    * @return Boolean True
    */
-  def isClimateRelated(description: String): Boolean = ???
-
+  def isClimateRelated(description: String): Boolean = {
+    val keywords = List("global warming", "IPCC", "climate change")
+    keywords.exists(keyword => description.contains(keyword))
+  }
   /**
    * parse a list of raw data and transport it with type into a list of CO2Record
    * if the ppm value is valid (some ppm values are negative (CO2Record's "isValidPpmValue" function))
@@ -25,10 +27,17 @@ object ClimateService {
    * otherwise : None
    * you can access to Tuple with myTuple._1, myTuple._2, myTuple._3
    */
+
   def parseRawData(list: List[(Int, Int, Double)]) : List[Option[CO2Record]] = {
-    list.map { record => ??? }
-    ???
+    list.map { record => {
+      if (record._3 > 0) {
+        Some(CO2Record(record._1, record._2, record._3))
+      } else {
+        None
+      }
+    }
   }
+}
 
   /**
    * remove all values from december (12) of every year
@@ -36,15 +45,24 @@ object ClimateService {
    * @param list
    * @return a list
    */
-  def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = ???
-
+  def filterDecemberData(list: List[Option[CO2Record]]) : List[CO2Record] = {
+    list.filter(_.isDefined).map(_.get).filter(_.month != 12)
+  }
 
   /**
    * **Tips**: look at the read me to find some tips for this function
    */
-  def getMinMax(list: List[CO2Record]) : (Double, Double) = ???
+  def getMinMax(list: List[CO2Record]) : (Double, Double) = {
+    val min = list.map(_.ppm).min
+    val max = list.map(_.ppm).max
+    (min, max)
+  }
 
-  def getMinMaxByYear(list: List[CO2Record], year: Int) : (Double, Double) = ???
+  def getMinMaxByYear(list: List[CO2Record], year: Int) : (Double, Double) = {
+    val min = list.filter(_.year == year).map(_.ppm).min
+    val max = list.filter(_.year == year).map(_.ppm).max
+    (min, max)
+  }
 
   /**
    * use this function side src/main/scala/com/polomarcus/main/Main (with sbt run)

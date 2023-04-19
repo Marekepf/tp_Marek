@@ -6,11 +6,13 @@ import org.scalatest.funsuite.AnyFunSuite
 class ClimateServiceTest extends AnyFunSuite {
   test("containsWordGlobalWarming - non climate related words should return false") {
     assert( ClimateService.isClimateRelated("pizza") == false)
+    assert( ClimateService.isClimateRelated("chocolate") == false)
   }
 
   test("isClimateRelated - climate related words should return true") {
     assert(ClimateService.isClimateRelated("climate change") == true)
-    assert(ClimateService.isClimateRelated("IPCC"))
+    assert(ClimateService.isClimateRelated("IPCC")== true)
+    assert(ClimateService.isClimateRelated("global warming")== true)
   }
 
   //@TODO
@@ -31,6 +33,20 @@ class ClimateServiceTest extends AnyFunSuite {
 
   //@TODO
   test("filterDecemberData") {
-    assert(true == false)
+    val list1 = List(Some(CO2Record(2003, 12, 355.2)), Some(CO2Record(2004, 1, 375.2)), None)
+    assert(ClimateService.filterDecemberData(list1) == List(CO2Record(2004,1,375.2)))
+    }
+
+  test("getMinMax") {
+    val list1 = List(CO2Record(2003, 12, 355.2), CO2Record(2004, 1, 375.2))
+    assert(ClimateService.getMinMax(list1) == (355.2, 375.2))
   }
-}
+
+  test("getMinMaxByYear") {
+    val list1 = List(CO2Record(2003, 12, 355.2), CO2Record(2003, 1, 375.2))
+    val rep = (355.2, 375.2)
+    assert(ClimateService.getMinMaxByYear(list1,year=2003) == rep)
+  }
+
+  }
+
